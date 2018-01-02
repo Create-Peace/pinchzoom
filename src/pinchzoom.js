@@ -548,12 +548,17 @@
                     this.updateAspectRatio();
 
                     var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor,
-                        offsetX = -this.offset.x / zoomFactor,
-                        offsetY = -this.offset.y / zoomFactor,
+                        // offsetX = -this.offset.x / zoomFactor,
+                        // offsetY = -this.offset.y / zoomFactor,
+                        // @ test
+                        offsetX = '-50%',
+                        offsetY = '-50%',
+
                         transform3d =   'scale3d('     + zoomFactor + ', '  + zoomFactor + ',1) ' +
-                            'translate3d(' + offsetX    + 'px,' + offsetY    + 'px,0px)',
+                            'translate3d(' + offsetX    + ',' + offsetY    + ',0px)',
                         transform2d =   'scale('       + zoomFactor + ', '  + zoomFactor + ') ' +
-                            'translate('   + offsetX    + 'px,' + offsetY    + 'px)',
+                            'translate('   + offsetX    + ',' + offsetY    + ')',
+                            
                         removeClone = (function () {
                             if (this.clone) {
                                 this.clone.remove();
