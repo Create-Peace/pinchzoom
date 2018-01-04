@@ -42,7 +42,7 @@
          */
         var PinchZoom = function (el, options) {
                 this.el = $(el);
-                this.zoomFactor = .5;
+                this.zoomFactor = 1;
                 this.lastScale = 1;
                 this.offset = {
                     x: 0,
@@ -157,7 +157,7 @@
             // @ test 1 改为 .5
             handleDoubleTap: function (event) {
                 var center = this.getTouches(event)[0],
-                    zoomFactor = this.zoomFactor > 1 ? .5 : this.options.tapZoomFactor,
+                    zoomFactor = this.zoomFactor > 1 ? 1 : this.options.tapZoomFactor,
                     startZoomFactor = this.zoomFactor,
                     updateProgress = (function (progress) {
                         this.scaleTo(startZoomFactor + progress * (zoomFactor - startZoomFactor), center);
@@ -373,6 +373,7 @@
              */
             getAspectRatio: function () {
                 return this.el[0].offsetWidth / this.el[0].offsetHeight;
+                // return '100%'
             },
 
             /**
@@ -488,7 +489,8 @@
             },
 
             setContainerY: function (y) {
-                return this.container.height(y);
+                　console.log('y:::::', y)
+                return this.container.height('100%');
             },
 
             /**
@@ -500,7 +502,7 @@
                 this.container.append(this.el);
 
                 this.container.css({
-                    'overflow': 'auto',
+                    'overflow': 'hidden',
                     'position': 'relative'
                 });
 
@@ -529,7 +531,6 @@
                 // Zepto and jQuery both know about `on`
                 $(window).on('resize', this.update.bind(this));
                 $(this.el).find('img').on('load', this.update.bind(this));
-                // $(this.el).on('load', this.update.bind(this))
 
             },
 
@@ -547,24 +548,34 @@
                     this.updatePlaned = false;
                     this.updateAspectRatio();
 
-                    var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor,
-                        // offsetX = -this.offset.x / zoomFactor,
-                        // offsetY = -this.offset.y / zoomFactor,
-                        // @ test
-                        offsetX = '-50%',
-                        offsetY = '-50%',
+                    var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor;
 
+                        var offsetX = -(this.offset.x / zoomFactor);
+
+                        console.log('zoomFactor:::', this.offset.x, zoomFactor)
+
+                        var offsetY = -(this.offset.y / zoomFactor),
+                        imgOffSetX = -this.el.width() * this.zoomFactor / 2,
+                        imgOffsetY = -this.el.height() * this.zoomFactor  / 2,
+                        // @ test
+                        // offsetX = '-0%',
+                        // offsetY = '-50%',
+                        //
+                        
                         transform3d =   'scale3d('     + zoomFactor + ', '  + zoomFactor + ',1) ' +
-                            'translate3d(' + offsetX    + ',' + offsetY    + ',0px)',
+                            'translate3d(' + offsetX    + 'px,' + offsetY    + 'px,0px)',
                         transform2d =   'scale('       + zoomFactor + ', '  + zoomFactor + ') ' +
-                            'translate('   + offsetX    + ',' + offsetY    + ')',
-                            
+                            'translate('   + offsetX    + 'px,' + offsetY    + 'px)',
+
                         removeClone = (function () {
                             if (this.clone) {
                                 this.clone.remove();
                                 delete this.clone;
                             }
                         }).bind(this);
+
+                        console.log('offset', offsetX,  offsetY)
+
 
                     // Scale 3d and translate3d are faster (at least on ios)
                     // but they also reduce the quality.
@@ -744,6 +755,7 @@
                             target.update();
                         }
                     }
+                    console.log('::firstMove::', firstMove)
 
                     firstMove = false;
                 }
