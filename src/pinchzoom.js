@@ -28,6 +28,7 @@
 // this.zoomFactor
 // 2 实现对图片双击的放大功能
 // 3 图片放大 缩小的位置问题
+
 (function () {
     'use strict';
     var definePinchZoom = function ($) {
@@ -49,9 +50,9 @@
                     y: 0
                 };
                 this.options = $.extend({}, this.defaults, options);
-                this.setupMarkup();
-                this.bindEvents();
-                this.update();
+                this.setupMarkup(); // 
+                this.bindEvents(); // 添加事件
+                this.update(); // 更新图片状态
                 // default enable.
                 this.enable();
 
@@ -352,7 +353,9 @@
             /**
              * Updates the aspect ratio
              */
+            // 
             updateAspectRatio: function () {
+              console.log('getContainerX', this.getContainerX(), this.getAspectRatio())
                 this.setContainerY(this.getContainerX() / this.getAspectRatio());
             },
 
@@ -371,9 +374,10 @@
              * Calculates the aspect ratio of the element
              * @return the aspect ratio
              */
+            // 图片的横竖比例
             getAspectRatio: function () {
+                console.log('offsetWidth', this.el[0], this.el[0].offsetWidth, this.el[0].offsetHeight)
                 return this.el[0].offsetWidth / this.el[0].offsetHeight;
-                // return '100%'
             },
 
             /**
@@ -476,30 +480,35 @@
              * @param p
              * @return {Number}
              */
+            // 动画的的摆动定时函数
             swing: function (p) {
                 return -Math.cos(p * Math.PI) / 2  + 0.5;
             },
-
+            // 计算容器的宽度
             getContainerX: function () {
                 return this.container[0].offsetWidth;
             },
-
+            // 计算容器的高度
             getContainerY: function () {
+                console.log('container[0]', this.container[0])
                 return this.container[0].offsetHeight;
             },
 
             setContainerY: function (y) {
-                　console.log('y:::::', y)
-                return this.container.height('100%');
+                　
+                return this.options.containerH ?   this.container.height(this.options.containerH) : this.container.height(y);
             },
 
             /**
              * Creates the expected html structure
              */
+            // 创建dom结构
+
             setupMarkup: function () {
                 this.container = $('<div class="pinch-zoom-container"></div>');
                 this.el.before(this.container);
                 this.container.append(this.el);
+                // this.el.wrap(this.container)
 
                 this.container.css({
                     'overflow': 'hidden',
@@ -516,7 +525,7 @@
                     'position': 'absolute'
                 });
             },
-
+            // 
             end: function () {
                 this.hasInteraction = false;
                 this.sanitize();
@@ -538,7 +547,7 @@
              * Updates the css values according to the current zoom factor and offset
              */
             update: function () {
-
+                console.log('this', this)
                 if (this.updatePlaned) {
                     return;
                 }
@@ -552,11 +561,9 @@
 
                         var offsetX = -(this.offset.x / zoomFactor);
 
-                        console.log('zoomFactor:::', this.offset.x, zoomFactor)
 
                         var offsetY = -(this.offset.y / zoomFactor),
-                        imgOffSetX = -this.el.width() * this.zoomFactor / 2,
-                        imgOffsetY = -this.el.height() * this.zoomFactor  / 2,
+                       
                         // @ test
                         // offsetX = '-0%',
                         // offsetY = '-50%',
